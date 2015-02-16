@@ -7,7 +7,8 @@ var getMessages = function() {
     type: 'GET',
     contentType: 'application/json',
     data: {
-      limit: 1000
+      limit: 1000,
+      order: '-createdAt'
     },
     success: success,
     error: function (data) {
@@ -19,7 +20,8 @@ var getMessages = function() {
 
 var success = function(data) {
   var $messages = $('.messages');
-  for(var i = 0; i < data.results.length; i++) {
+   $('.message').remove();
+  for(var i = data.results.length - 1; i > -1; i--) {
     $messages.append('<div class=message></div>');
     var $message = $('.message:last-child');
     var text = encodeURI(data.results[i].text);
@@ -33,4 +35,4 @@ var success = function(data) {
 };
 
 
-getMessages();
+setInterval(getMessages, 5000);
