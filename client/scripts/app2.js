@@ -44,24 +44,28 @@ var Tweets = Backbone.Collection.extend({
 });
 
 var TweetsView = Backbone.View.extend({
+  className: 'messages',
   initialize: function() {
-    this.listenTo(this.model, "change", this.render);
+    this.listenTo(this.model, 'change', this.render);
   },
-  template: _.template('<div class="messages"></div>'),
   render: function() {
-    this.$el.html(this.template());
-
-    this.$el.append(this.model.map(function(tweet) {
-      var tweetView = new TweetView({model: tweet});
-      return tweetView.render().html();
-    }));
+    this.$el.append(
+      this.model.map(function(tweet) {
+        var tweetView = new TweetView({model: tweet});
+        return tweetView.render().html();
+      })
+    );
     return this.$el;
   }
 });
 var tweets = new Tweets();
 var tweetsView = new TweetsView({model: tweets});
 
-$('body').append(tweetsView.render());
+
 setInterval(function(){
   tweets.fetch({remove: false, data: {sort: '-createdAt'}});
 }, 1000);
+
+$(function(){
+  $('body').append(tweetsView.render());
+});
