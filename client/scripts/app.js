@@ -20,9 +20,10 @@ var getMessages = function() {
 
 var success = function(data) {
   var $messages = $('.messages');
-   $('.message').remove();
+  $('.message').remove();
   for(var i = data.results.length - 1; i > -1; i--) {
-    $messages.append('<div class="message well"></div>');
+    var room = encodeURI(data.results[i].roomname);
+    $messages.append('<div class="message well ' + room + '"></div>');
     var $message = $('.message:last-child');
     var text = encodeURI(data.results[i].text);
     text = text.replace(/\%20/g, ' ');
@@ -31,17 +32,38 @@ var success = function(data) {
     $message.append('<div class="user">'+user+': </div>');
     $message.append('<div class="text">'+text+'</div>');
   }
-  console.log(data);
+  filterByRoom();
+  debouncedPopulateRooms(data.results);
+
 };
+
+var populateRooms = function(results) {
+  $('option').remove();
+  var allRooms = _.pluck(results, 'roomname');
+  allRooms.sort();
+  allRooms = _.uniq(allRooms);
+  for(var i = 0; i < allRooms.length; i++) {
+   var room = encodeURI(allRooms[i]);
+   room = room.replace(/\%20/g, ' ');
+   $('select').append('<option value=' + room + '>' + room + '</option>');
+  }
+};
+
+var debouncedPopulateRooms = _.debounce(populateRooms, 10 * 1000, true);
+
 
 var submit = function() {
   var username = $('.userBox').val();
   var text = $('.messageBox').val();
   $('.messageBox').val('');
+  var room = $('select').val();
+  if (room === null) {
+    room = '';
+  }
   var message = {
     'username': username,
     'text': text,
-    'roomname': ''
+    'roomname': room
   };
   submitMessage(message);
 };
@@ -61,6 +83,13 @@ var submitMessage = function(message) {
   });
 };
 
+var filterByRoom = function() {
+  var roomVal =  $('select').val();
+  $('.message').show();
+  if(roomVal) {
+    $('.message').not('.' + roomVal).hide();
+  }
+}
 
 
 
