@@ -14,13 +14,54 @@ var Tweet = Backbone.Model.extend({
   username: function() {
     return this.get('username');
   },
-  idAttribute: 'objectId'
+  idAttribute: 'objectId',
+  parse: function(response) {
+    response.username = response.username || null;
+    response.roomname = response.roomname || null;
+    response.text = response.text || null;
+    return response;
+  }
+});
+
+var TweetView = Backbone.View.extend({
+  initialize: function() {
+    this.listenTo(this.model, "change", this.render);
+  },
+  template: _.template('<div class="message"><div class="user"><%= username %></div><div class="text"><%= text %></div></div>'),
+  render: function() {
+    this.$el.html(this.template(this.model.attributes));
+    return this.$el;
+  }
 });
 
 var Tweets = Backbone.Collection.extend({
   model: Tweet,
   url: 'https://api.parse.com/1/classes/chatterbox',
+  comparator: 'createdAt',
   parse: function(response) {
     return response.results;
   }
 });
+
+var TweetsView = Backbone.View.extend({
+  initialize: function() {
+    this.listenTo(this.model, "change", this.render);
+  },
+  template: _.template('<div class="messages"></div>'),
+  render: function() {
+    this.$el.html(this.template());
+
+    this.$el.append(this.model.map(function(tweet) {
+      var tweetView = new TweetView({model: tweet});
+      return tweetView.render().html();
+    }));
+    return this.$el;
+  }
+});
+var tweets = new Tweets();
+var tweetsView = new TweetsView({model: tweets});
+
+$('body').append(tweetsView.render());
+setInterval(function(){
+  tweets.fetch({remove: false, data: {sort: '-createdAt'}});
+}, 1000);
