@@ -19,6 +19,7 @@ var getMessages = function() {
 };
 
 var success = function(data) {
+  console.log(data);
   var $messages = $('.messages');
   $('.message').remove();
   for(var i = data.results.length - 1; i > -1; i--) {
