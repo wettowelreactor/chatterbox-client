@@ -34,5 +34,42 @@ var success = function(data) {
   console.log(data);
 };
 
+var submit = function() {
+  var username = $('.userBox').val();
+  var text = $('.messageBox').val();
+  $('.messageBox').val('');
+  var message = {
+    'username': username,
+    'text': text,
+    'roomname': ''
+  };
+  submitMessage(message);
+};
+
+var submitMessage = function(message) {
+  debugger;
+  $.ajax({
+    url: 'https://api.parse.com/1/classes/chatterbox',
+    type: 'POST',
+    data: JSON.stringify(message),
+    contentType: 'application/json',
+    success: function (data) {
+      console.log('chatterbox: Message sent');
+    },
+    error: function (data) {
+      console.error('chatterbox: Failed to send message');
+    }
+  });
+};
+
+
+
+
+
+
+
+
 
 setInterval(getMessages, 5000);
+
+
