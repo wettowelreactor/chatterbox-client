@@ -7,7 +7,7 @@ var getMessages = function() {
     type: 'GET',
     contentType: 'application/json',
     data: {
-      limit: 1000,
+      limit: 50,
       order: '-createdAt'
     },
     success: success,
@@ -23,21 +23,30 @@ var success = function(data) {
   $('.message').remove();
   for(var i = data.results.length - 1; i > -1; i--) {
     var room = encodeURI(data.results[i].roomname);
-    $messages.append('<div class="message well ' + room + '"></div>');
     var $message = $('.message:last-child');
     var text = encodeURI(data.results[i].text);
     text = text.replace(/\%20/g, ' ');
     var user = encodeURI(data.results[i].username);
     user = user.replace(/\%20/g, ' ');
+    $messages.append('<div class="message well ' + room + '"></div>');
+    if (friends.indexOf(user) !== -1) {
+      $message.addClass('friend');
+    }
     $message.append('<div class="user">'+user+': </div>');
     $message.append('<div class="text">'+text+'</div>');
   }
+  $('.user').click(function(event) {
+    var friend = $(event.target).text().slice(0,-2);
+    friends.push(friend);
+    friends = _.uniq(friends);
+  });
+  populateRooms(data.results);
   filterByRoom();
-  debouncedPopulateRooms(data.results);
-
 };
 
 var populateRooms = function(results) {
+
+  var selectedRoom = $('option:checked').val();
   $('option').remove();
   var allRooms = _.pluck(results, 'roomname');
   allRooms.sort();
@@ -47,16 +56,15 @@ var populateRooms = function(results) {
    room = room.replace(/\%20/g, ' ');
    $('select').append('<option value=' + room + '>' + room + '</option>');
   }
+  $('option[value="' + selectedRoom + '"]').prop('selected', true);
 };
-
-var debouncedPopulateRooms = _.debounce(populateRooms, 10 * 1000, true);
-
 
 var submit = function() {
   var username = $('.userBox').val();
   var text = $('.messageBox').val();
   $('.messageBox').val('');
-  var room = $('select').val();
+  var room = $('.roomBox').val() || $('select').val();
+  $('.roomBox').val('');
   if (room === null) {
     room = '';
   }
@@ -91,6 +99,7 @@ var filterByRoom = function() {
   }
 }
 
+var friends = [];
 
 
 
@@ -98,6 +107,6 @@ var filterByRoom = function() {
 
 
 
-setInterval(getMessages, 1000);
+setInterval(getMessages, 2000);
 
 

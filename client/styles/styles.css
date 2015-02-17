@@ -88,8 +88,14 @@ form input[type=text] {
     position: relative;
     float: left;
     text-align:left;
-    padding: 0 5px 0 0;
+    padding: 10px;
     font-weight: bold;
+    border: 1px solid black;
+}
+
+.user:hover {
+    text-decoration: underline;
+    cursor: pointer;
 }
 
 .text {
@@ -108,6 +114,11 @@ form input[type=text] {
     width: 90%;
     margin: 0 0 10px 0;
 
+}
+
+.friend {
+    font-weight: 800;
+    color: blue;
 }
 
 select {
