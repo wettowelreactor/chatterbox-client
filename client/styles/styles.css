@@ -97,9 +97,9 @@ form input[type=text] {
     text-align:left;
 }
 
-.userBox {
-    float: left;
-    margin: 0 0 10px 0;
+.userBox .roomBox {
+    display: block;
+    margin: 10px 0 10px 0;
 }
 
 .messageBox {
@@ -108,4 +108,13 @@ form input[type=text] {
     width: 90%;
     margin: 0 0 10px 0;
 
+}
+
+select {
+    display: block;
+    width: 300px;
+}
+
+form {
+    border: 1px solid black;
 }
