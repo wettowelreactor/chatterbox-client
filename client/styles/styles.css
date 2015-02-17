@@ -2,7 +2,8 @@ body {
     background: #eee;
     text-align: center;
     padding: 0 25px;
-    font-family: arial, sans-serif;
+    font-family: Helvetica Nueue, Helvetica, sans-serif;
+    font-weight: 200;
 }
 
 #main {
@@ -83,23 +84,12 @@ form input[type=text] {
     padding: 10px;
 }
 
-.messages {
-
-}
-
-.message {
-  position: relative;
-  border: 1px solid black;
-  margin: 0 0 10px 0;
-  height: 30px;
-  overflow: hidden;
-}
-
 .user {
     position: relative;
     float: left;
     text-align:left;
     padding: 0 5px 0 0;
+    font-weight: bold;
 }
 
 .text {

@@ -22,7 +22,7 @@ var success = function(data) {
   var $messages = $('.messages');
    $('.message').remove();
   for(var i = data.results.length - 1; i > -1; i--) {
-    $messages.append('<div class=message></div>');
+    $messages.append('<div class="message well"></div>');
     var $message = $('.message:last-child');
     var text = encodeURI(data.results[i].text);
     text = text.replace(/\%20/g, ' ');
@@ -47,7 +47,6 @@ var submit = function() {
 };
 
 var submitMessage = function(message) {
-  debugger;
   $.ajax({
     url: 'https://api.parse.com/1/classes/chatterbox',
     type: 'POST',
@@ -70,6 +69,6 @@ var submitMessage = function(message) {
 
 
 
-setInterval(getMessages, 5000);
+setInterval(getMessages, 1000);
 
 
