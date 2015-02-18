@@ -27,7 +27,7 @@ var TweetView = Backbone.View.extend({
   initialize: function() {
     this.listenTo(this.model, "change", this.render);
   },
-  template: _.template('<div class="message"><div class="user"><%= username %></div><div class="text"><%= text %></div></div>'),
+  template: _.template('<div class="message"><div class="user"><%- username %></div><div class="text"><%- text %></div><div><%- createdAt %></div></div>'),
   render: function() {
     this.$el.html(this.template(this.model.attributes));
     return this.$el;
@@ -37,7 +37,6 @@ var TweetView = Backbone.View.extend({
 var Tweets = Backbone.Collection.extend({
   model: Tweet,
   url: 'https://api.parse.com/1/classes/chatterbox',
-  comparator: 'createdAt',
   parse: function(response) {
     return response.results;
   }
@@ -46,11 +45,13 @@ var Tweets = Backbone.Collection.extend({
 var TweetsView = Backbone.View.extend({
   className: 'messages',
   initialize: function() {
-    this.listenTo(this.model, 'change', this.render);
+    this.listenTo(this.collection, 'change', this.render);
+    this.listenTo(this.collection, 'fetch', this.render);
+    this.listenTo(this.collection, 'sync', this.render);
   },
   render: function() {
-    this.$el.append(
-      this.model.map(function(tweet) {
+    this.$el.prepend(
+      this.collection.map(function(tweet) {
         var tweetView = new TweetView({model: tweet});
         return tweetView.render().html();
       })
@@ -59,11 +60,14 @@ var TweetsView = Backbone.View.extend({
   }
 });
 var tweets = new Tweets();
-var tweetsView = new TweetsView({model: tweets});
+var tweetsView = new TweetsView({collection: tweets});
 
 
 setInterval(function(){
-  tweets.fetch({remove: false, data: {sort: '-createdAt'}});
+  tweets.fetch({data: {
+      limit: 50,
+      order: '-createdAt'
+    }});
 }, 1000);
 
 $(function(){
