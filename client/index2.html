@@ -25,8 +25,8 @@
     <div class="input">
       <form action="javascript:formView.submitForm()">
         <label>Rooms</label>
-        <select multiple class="roomList">
-        </select>
+       <!--  <select multiple class="roomList">
+        </select> -->
         <input type="text" placeholder="username" class="userBox">
         <input type="text" placeholder="Add a room?" class="roomBox">
         <textarea placeholder="Write your message here!" class="messageBox"></textarea>
@@ -34,7 +34,7 @@
       </form>
     </div>
     <script>
-      var formView = new FormView({el: $("form").html()});
+      var formView = new FormView({el: $("form")});
     </script>
   </body>
 </html>

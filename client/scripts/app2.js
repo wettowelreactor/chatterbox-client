@@ -44,8 +44,6 @@ var TweetsView = Backbone.View.extend({
     return this.$el;
   }
 });
-var tweets = new Tweets();
-var tweetsView = new TweetsView({collection: tweets});
 
 
 setInterval(function(){
@@ -62,13 +60,55 @@ var FormView = Backbone.View.extend({
     "submit": "submitForm"
   },
   submitForm: function () {
-    var username = this.$el.siblings('.userBox').val();
-    var text = this.$el.siblings('.textBox').val();
-debugger;
+    var username = this.$el.find('.userBox').val();
+    var text = this.$el.find('.messageBox').val();
+    this.$el.find('.messageBox').val('');
     this.collection.create({username: username, text: text});
   }
 });
 
+var RoomView = Backbone.View.extend({
+  tagName: 'option',
+  initialize: function() {
+    this.listenTo(this.model, 'change', this.render);
+  },
+  render: function() {
+    this.$el.val(this.model.get('roomname'));
+    this.$el.text(this.model.get('roomname'));
+    return this.$el;
+  }
+});
+
+var RoomsView = Backbone.View.extend({
+  tagName: 'select',
+  collection: tweets,
+  initialize: function() {
+    this.listenTo(this.collection, 'change', this.render);
+    this.listenTo(this.collection, 'fetch', this.render);
+    this.listenTo(this.collection, 'sync', this.render);
+  },
+  render: function() {
+    var rooms = [];
+    $('option').each(function(){
+      rooms.push($(this).val());
+    });
+    this.$el.prepend(
+      this.collection.map(function(tweet) {
+        var roomView = new RoomView({model: tweet});
+        if (rooms.indexOf(roomView.model.get('roomname')) === -1) {
+          rooms.push(roomView.model.get('roomname'));
+          return roomView.render();
+        }
+      })
+    );
+    return this.$el;
+  }
+});
+
+  var tweets = new Tweets();
+  var tweetsView = new TweetsView({collection: tweets});
+  var roomsView = new RoomsView({collection: tweets});
 $(function(){
   $('body').append(tweetsView.render());
+  $('label').append(roomsView.render());
 });
