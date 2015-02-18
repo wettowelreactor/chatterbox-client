@@ -12,7 +12,7 @@ var TweetView = Backbone.View.extend({
   initialize: function() {
     this.listenTo(this.model, "change", this.render);
   },
-  template: _.template('<div class="message"><div class="user"><%- username %></div><div class="text"><%- text %></div><div><%- createdAt %></div></div>'),
+  template: _.template('<div class="message"><div class="user"><%- username %></div><div class="text"><%- text %></div><div><%- createdAt %></div><div><%- roomname %></div></div>'),
   render: function() {
     this.$el.html(this.template(this.model.attributes));
     return this.$el;
@@ -35,10 +35,16 @@ var TweetsView = Backbone.View.extend({
     this.listenTo(this.collection, 'sync', this.render);
   },
   render: function() {
+
+
     this.$el.prepend(
       this.collection.map(function(tweet) {
         var tweetView = new TweetView({model: tweet});
-        return tweetView.render().html();
+        var room = tweetView.model.get('roomname');
+        var selectedRoom = $('option:selected').val();
+        if(room === selectedRoom) {
+          return tweetView.render().html();
+        }
       })
     );
     return this.$el;
