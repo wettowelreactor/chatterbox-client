@@ -1,19 +1,4 @@
 var Tweet = Backbone.Model.extend({
-  createdAt: function() {
-      return this.get('createdAt');
-  },
-  roomname: function() {
-    return this.get('roomname');
-  },
-  text: function() {
-    return this.get('text');
-  },
-  updatedAt: function() {
-    return this.get('updatedAt');
-  },
-  username: function() {
-    return this.get('username');
-  },
   idAttribute: 'objectId',
   parse: function(response) {
     response.username = response.username || null;
@@ -69,6 +54,20 @@ setInterval(function(){
       order: '-createdAt'
     }});
 }, 1000);
+
+
+var FormView = Backbone.View.extend({
+  collection: tweets,
+  events: {
+    "submit": "submitForm"
+  },
+  submitForm: function () {
+    var username = this.$el.siblings('.userBox').val();
+    var text = this.$el.siblings('.textBox').val();
+debugger;
+    this.collection.create({username: username, text: text});
+  }
+});
 
 $(function(){
   $('body').append(tweetsView.render());
